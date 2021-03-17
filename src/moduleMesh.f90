@@ -253,7 +253,7 @@ contains
     !-----------------------------------
     return
   end subroutine meshF2C
-  
+  	 
   subroutine meshC_read_mesh(obC)  bind(C, name="read_mesh")
     !-----------------------------------
     type(meshC), intent(in) :: obC
@@ -303,7 +303,5 @@ contains
     !-----------------------------------
     return
   end subroutine meshF_read_mesh
-
-
 
 end module moduleMesh

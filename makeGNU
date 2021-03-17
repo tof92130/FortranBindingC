@@ -26,7 +26,7 @@ OBJDIR = ./obj
 MODDIR = ./mod
 EXEDIR = ./
 #LIBDIR = /usr/local/lib
-LIBDIR = /usr/local/Cellar
+#LIBDIR = /usr/local/Cellar
 
 
 # INCL and MODS
@@ -43,7 +43,7 @@ CXFLAGS    = -c -O3
 
 # Linkage
 
-LDFLAGS =  -m64 -lstdc++ -lgfortran
+LDFLAGS =  -m64 -lstdc++ #-lgfortran
 LIBS    = 
 
 

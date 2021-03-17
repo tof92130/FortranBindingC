@@ -27,7 +27,7 @@ int main (int argc, const char * argv[]) {
   if( strcmp(myMesh.mesh_name,"Tetra")==0  ){
     cout << "Bon Choix !"<< endl;
   }else{
-    cout << "Mauvais Choix ! "<< strcmp(myMesh.mesh_name,"Tetra") << endl;
+    cout << "Mauvais Choix ! "<< endl;
   }
   
   myMesh.nVert=0;
