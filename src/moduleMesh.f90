@@ -1,6 +1,13 @@
 module moduleMesh
   !---------------------------------------  
   use, intrinsic :: iso_c_binding
+  
+  use, intrinsic :: ISO_C_Binding, &
+  &     C_ptr => C_ptr , &
+  &     C_char_ptr => C_ptr, &
+  &     C_const_char_ptr => C_ptr, &
+  &     C_void_ptr => C_ptr, &
+  &     C_const_void_ptr => C_ptr  
   !---------------------------------------
   use omp_lib
   
@@ -11,7 +18,8 @@ module moduleMesh
     !-------
     integer               :: nlog
     !-------
-    character(256)        :: mesh_name
+    !character(256)        :: mesh_name
+    character(len=:), pointer :: mesh_name
     integer               :: geo
     integer               :: prec
     integer               :: nvert
@@ -47,7 +55,8 @@ module moduleMesh
     !-------
     integer(c_int)      :: nlog
     !-------
-    character(len=1,kind=c_char)   :: mesh_name(256)
+    type(c_ptr)                    :: mesh_name
+   !character(len=1,kind=c_char)   :: mesh_name(256)
     integer(c_int)                 :: geo
     integer(c_int)                 :: prec
     integer(c_int)                 :: nVert
@@ -77,33 +86,54 @@ module moduleMesh
     integer(c_int)                 :: ker
     !-------
   end type meshC
-
+  
   interface read_mesh         ; module procedure meshF_read_mesh        ; end interface
   public :: read_mesh
+  
+  interface
+    !interfaces to C functions
+    function strlen(str) result(isize) bind(C, name='strlen')
+        import
+        type(c_ptr),value :: str
+        integer(c_int)    :: isize
+    end function strlen
+  end interface
   
 contains
   
   subroutine meshC2F(obC,obF)
     !-----------------------------------
-    type(meshC) :: obC
-    type(meshF) :: obF
+    type(meshC)                           :: obC
+    type(meshF)                           :: obF
     !-----------------------------------
-    integer     :: iChar
-    integer     :: iField
-    integer     :: nCmp
-    integer     :: nCell
+    integer                               :: iChar
+    integer                               :: iField
+    integer                               :: nCmp
+    integer                               :: nCell
+    character(len=1,kind=c_char), pointer :: buffer(:)
+    integer                               :: c_len
     !-----------------------------------
     print '(">>> meshC2F")'
     !-----------------------------------
     obF%nlog=obC%nlog
     !-------
-
-    iChar=1
-    do while( obC%mesh_name(iChar)/=c_null_char .and. obC%mesh_name(iChar)/='.' )
-      iChar=iChar+1
+    
+    c_len=strlen(obC%mesh_name) ; print '(4x,"meshC2F c_len=",i0)',c_len
+    call c_f_pointer(cptr=obC%mesh_name, fptr=buffer, shape=[c_len]) ; print '(4x,"meshC2F buffer=",*(a))',buffer(1:c_len)
+    
+    allocate(character(len=c_len) :: obF%mesh_name)
+    
+    write(obF%mesh_name,'(*(a))')buffer(1:c_len) 
+    
+    !obF%mesh_name,*)=buffer(1:c_len-1)
+    print '(4x,"meshC2F obF%mesh_name=",a)',obF%mesh_name
+    
+    !iChar=1
+    !do while( obC%mesh_name(iChar)/=c_null_char .and. obC%mesh_name(iChar)/='.' )
+      !iChar=iChar+1
       !print '("iChar=",i0)',ichar
-    enddo
-    if( .not.iChar==1 )write(obF%mesh_name,*)obC%mesh_name(1:iChar-1)
+    !enddo
+    !if( .not.iChar==1 )write(obF%mesh_name,*)obC%mesh_name(1:iChar-1)
     !print *,"obC%mesh_name(iChar)=",obC%mesh_name(1:iChar-1)
     
     obF%geo=obC%geo
@@ -164,12 +194,12 @@ contains
     !-------
     obF%solution=obC%solution
     
-    iChar=1
-    do while( obC%solu_name(iChar)/=c_null_char .and. obC%solu_name(iChar)/='.' )
-      iChar=iChar+1
-    enddo
-    
-    if( iChar/=1 )write(obF%solu_name,'(a)')obC%solu_name(1:iChar-1)
+    !iChar=1
+    !do while( obC%solu_name(iChar)/=c_null_char .and. obC%solu_name(iChar)/='.' )
+    !  iChar=iChar+1
+    !enddo
+    !
+    !if( iChar/=1 )write(obF%solu_name,'(a)')obC%solu_name(1:iChar-1)
     
     obF%nsol=obC%nsol
     obF%nfld=obC%nfld
@@ -207,11 +237,11 @@ contains
     !-----------------------------------
     print '(">>> meshC2F")'
     !-----------------------------------
-    print '(/"@meshC2F: tetra(:,1)=",5(i2,1x)/)',obF%tetra(:,1)
+    print '(4x,"meshC2F: tetra(:,1)=",5(i2,1x))',obF%tetra(:,1)
     !-------
     obC%nlog=obF%nlog
     !------- 
-    obC%mesh_name=trim(obF%mesh_name)//c_null_char
+    !obC%mesh_name=trim(obF%mesh_name)//c_null_char
     !
     obC%geo=obF%geo
     obC%prec=obF%prec
@@ -254,7 +284,7 @@ contains
     !-----------------------------------
     return
   end subroutine meshF2C
-  	 
+  
   subroutine meshC_read_mesh(obC)  bind(C, name="read_mesh")
     !-----------------------------------
     type(meshC), intent(in) :: obC
@@ -297,7 +327,7 @@ contains
     ob%trian(1:4,3)=[1,2,4,5]
     ob%trian(1:4,4)=[1,3,2,5]
 
-    print '(/"@meshF_read_mesh: tetra(:,1)=",5(i2,1x)/)',ob%tetra(:,1)
+    print '(4x,"meshF_read_mesh: ob%tetra(:,1)=",*(i2,1x))',ob%tetra(:,1)
 
     !-----------------------------------
     print '("<<< meshF_read_mesh")'

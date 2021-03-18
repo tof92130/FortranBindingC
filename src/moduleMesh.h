@@ -1,41 +1,41 @@
 
-typedef struct {
+typedef struct
+{
   //-------
-  int     nlog;
+  int nlog;
   //-------
-  char    mesh_name[256];
-  int     geo;
-  int     prec;
-  int     nVert;
+  char *mesh_name;
+  int geo;
+  int prec;
+  int nVert;
   double *vertx;
-  int    *mark;
-  int     nH6;
-  int    *hexas;
-  int     nT4;
-  int    *tetra;
-  int     nQ4;
-  int   *quadr;
-  int     nT3;
-  int    *trian;
-  int     nL2;
-  int    *edges;
+  int *mark;
+  int nH6;
+  int *hexas;
+  int nT4;
+  int *tetra;
+  int nQ4;
+  int *quadr;
+  int nT3;
+  int *trian;
+  int nL2;
+  int *edges;
   double *norms;
-  double  xmin,xmax;
-  double  ymin,ymax;
-  double  zmin,zmax;
-  double  baryCenter[3];
+  double xmin, xmax;
+  double ymin, ymax;
+  double zmin, zmax;
+  double baryCenter[3];
   //-------
-  bool    solution;
-  char    solu_name[256];
-  int     nSol,nFld;
+  bool solution;
+  char solu_name[256];
+  int nSol, nFld;
   double *solu;
-  int     kind[20];
-  int     ker;
-}meshC;
+  int kind[20];
+  int ker;
+} meshC;
 
-
-extern "C" {  
-  void cflAnalyser(meshC*, bool*);
-  void read_mesh  (meshC*);
+extern "C"
+{
+  void cflAnalyser(meshC *, bool *);
+  void read_mesh(meshC *);
 }
-
