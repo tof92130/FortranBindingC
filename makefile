@@ -34,13 +34,13 @@ MODS   = -module $(MODDIR)
 
 # Compiler Flags
 
-FCFLAGS    = -c -g  -arch x86_64 $(MODS) $(INCL) -openmp
-CCFLAGS    = -c -g  -arch x86_64 
-CXFLAGS    = -c -g  -arch x86_64 
+FCFLAGS    = -c -O0 -g -check all -fpe0 -warn -traceback -debug extended  $(MODS) $(INCL)
+CCFLAGS    = -c -g  
+CXFLAGS    = -c -g  
 
 # Linkage
 
-LDFLAGS =  -openmp  -arch x86_64 -static-intel -nofor-main -cxxlib
+LDFLAGS =  -static-intel -nofor-main -cxxlib
 LIBS    = 
 
 

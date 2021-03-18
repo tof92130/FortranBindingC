@@ -228,9 +228,10 @@ contains
     if( associated(obF%edges) )then
       obC%edges=c_loc(obF%edges(1,1))
     else
-      print '("obF%edges n''est pas associe")'
-      obC%edges=c_loc(obF%edges(1,1))
-      print '("et pourtant obC%edges=c_loc(obF%edges(1,1)) ne plante pas")'
+      !print '("obF%edges n''est pas associe")'
+      !obC%edges=c_loc(obF%edges(1,1))
+      !obC%edges=c_loc(obF%edges)
+      !print '("et pourtant obC%edges=c_loc(obF%edges(1,1)) ne plante pas")'
     endif
 
     if( associated(obF%norms) )obC%norms=c_loc(obF%norms(1,1))
